@@ -7,8 +7,12 @@ from src.buttons import ButtonText, get_organization_menu_markup, generate_addit
 from src.config import ACCESS_FOR_DATA_UPDATE
 from src.services.base_services import GetInstallmentPlanData, ShowInstallmentDetail, AddExcelFile, SendApplication, \
     MakePayment
+from dotenv import load_dotenv
 
-bot_token = '7388482843:AAE5uQXFfF_LBy6JRYMpAhVifPSCXW0YUAU'
+load_dotenv()
+
+
+bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
 bot = TeleBot(bot_token)
 
 
