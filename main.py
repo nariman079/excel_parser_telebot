@@ -1,3 +1,5 @@
+import os.path
+
 from telebot import TeleBot
 from telebot.types import Message, CallbackQuery
 
@@ -57,4 +59,8 @@ def callback_query(call: CallbackQuery):
 
 
 if __name__ == '__main__':
+    if os.path.isdir('documents/'):
+        pass
+    else:
+        os.mkdir('documents/')
     bot.infinity_polling()
