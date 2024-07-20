@@ -307,7 +307,15 @@ class AddExcelFile(
                 message, self._get_and_check_file
             )
             return
-
+        except ValueError as error:
+            self.bot.send_message(
+                chat_id=self.telegram_id,
+                text="".join(error.args),
+            )
+            self.bot.register_next_step_handler(
+                message, self._get_and_check_file
+            )
+            return
 
 class SendApplication:
     """ Событие для кнопки "Отправить заявку" """
