@@ -1,0 +1,8 @@
+services:
+  bot:
+    build: .
+    restart: unless-stopped
+    command: /bin/bash -c "python /bot/main.py"
+    network_mode: 'host'
+    volumes:
+      - ./:/bot/
