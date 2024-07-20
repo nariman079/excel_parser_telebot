@@ -1,4 +1,15 @@
-from src.config import DEADLINE_TITLE
+import datetime
+
+from src.config import DEADLINE_TITLE, TIME_ROW_TITLE
+
+
+def get_month_label(number):
+    if number % 10 == 1 and number % 100 != 11:
+        return f"{number} месяц"
+    elif 2 <= number % 10 <= 4 and (number % 100 < 10 or number % 100 >= 20):
+        return f"{number} месяца"
+    else:
+        return f"{number} месяцев"
 
 
 def replace_message(
@@ -23,7 +34,9 @@ def generate_message(
     for key, value in message_data.items():
         if key in keys_for_generate:
             if key == DEADLINE_TITLE:
-                value = str(int(value)) + ' месяцев'
+                value = get_month_label(int(value))
+            elif key == TIME_ROW_TITLE:
+                value = value.strftime('%d-%m-%Y')
             try:
                 result_message += f"{key}: {int(value)}\n"
             except ValueError:
@@ -33,6 +46,3 @@ def generate_message(
         else:
             continue
     return result_message
-
-
-

@@ -78,6 +78,7 @@ class ShowInstallmentDetail(
             excel_data
         )
 
+
     def __generate_and_send_message(self) -> None:
         """Генерация текста и отправка сообщения"""
 
@@ -100,8 +101,7 @@ class ShowInstallmentDetail(
         """Выполнение команд"""
 
         self.__get_product()
-
-        if not self.product_number:
+        if not self.product_data:
             self.bot.send_message(
                 chat_id=self.message.chat.id,
                 text="Такого договора не найдено",
@@ -159,7 +159,7 @@ class GetInstallmentPlanData(
             case _:
                 self.bot.send_message(
                     chat_id=message.chat.id,
-                    text="Выберите правильный формат поиска",
+                    text="Выберите правильный способ поиска",
                     reply_markup=get_search_buttons()
                 )
                 self.bot.register_next_step_handler(
@@ -232,7 +232,7 @@ class GetInstallmentPlanData(
 
         self.bot.send_message(
             chat_id=message.chat.id,
-            text="Ваши договоры:",
+            text="Ваши расскрочки:",
             reply_markup=generate_product_list_buttons(searched_data)
         )
 

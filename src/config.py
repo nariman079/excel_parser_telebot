@@ -32,6 +32,7 @@ WORDS_FOR_REPLACE = [
 
 DEADLINE_TITLE = 'М'
 PRODUCT_ROW_TITLE = 'Товар'
+TIME_ROW_TITLE = "Дата оф"
 NUMBER_ROW_TITLE = '№'
 
 SITE_URL = 'https://ansar05.ru/'

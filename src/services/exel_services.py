@@ -4,6 +4,7 @@ from pandas import read_excel
 
 
 def get_first_obj(objects: list):
+    """Получение первого объекта со списка"""
     if len(objects) == 0:
         return None
     return objects[0]
@@ -27,7 +28,7 @@ def find_row_by_number(
 ) -> dict | None:
     """Поиск строки по ID в списке"""
     result_data = filter(
-        lambda x: int(x['№']) == id_,
+        lambda x: int(x['№']) == int(id_),
         rows_list
     )
     return get_first_obj(list(result_data))
