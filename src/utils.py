@@ -32,6 +32,7 @@ def generate_message(
     result_message = ""
 
     for key, value in message_data.items():
+
         if key in keys_for_generate:
             if key == DEADLINE_TITLE:
                 value = get_month_label(int(value))

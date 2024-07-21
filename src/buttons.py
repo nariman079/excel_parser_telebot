@@ -15,7 +15,19 @@ class ButtonText(StrEnum):
 
     add_excel_file = "Добавить excel файл"
 
+    back_button_text = "Назад"
+    main_menu_button_text = "Главное меню"
 
+def get_control_buttons() -> tuple:
+    back_button = KeyboardButton(
+        ButtonText.back_button_text
+    )
+    main_menu_button = KeyboardButton(
+        ButtonText.main_menu_button_text
+    )
+    
+    return back_button, main_menu_button
+    
 def get_organization_menu_markup() -> ReplyKeyboardMarkup:
     """
     Генерация кнопок для меню
@@ -82,9 +94,10 @@ def get_search_buttons() -> ReplyKeyboardMarkup:
     search_by_phone_number_button = KeyboardButton(
         ButtonText.search_by_phone_number_button_text
     )
-
+    
     search_markup.add(search_by_number_button)
     search_markup.add(search_by_phone_number_button)
+    search_markup.row(*get_control_buttons())
 
     return search_markup
 
@@ -111,4 +124,5 @@ def get_full_menu_markup(username: str) -> ReplyKeyboardMarkup:
         menu_markup.add(generate_additional_button())
 
     return menu_markup
+
 

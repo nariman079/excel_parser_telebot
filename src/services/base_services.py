@@ -1,5 +1,6 @@
 import os
-from functools import wraps
+from functools import wraps, partial
+from pprint import pprint
 from typing import Any
 
 from telebot import TeleBot
@@ -8,7 +9,7 @@ from telebot.types import Message, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from src.config import KEYS_FOR_GENERATE_MESSAGE, WORDS_FOR_REPLACE, \
     ACCESS_FOR_DATA_UPDATE, SITE_URL, WHATSAPP_URL
 from src.buttons import get_search_buttons, ButtonText, generate_product_list_buttons, generate_additional_button, \
-    generate_url_button, get_full_menu_markup
+    generate_url_button, get_full_menu_markup, get_control_buttons
 from src.services.exel_services import get_excel_data, find_rows_by_phone_number, find_row_by_number
 from src.utils import generate_message, replace_message
 from src.buttons import get_organization_menu_markup
@@ -23,18 +24,31 @@ def check_start(func):
     @wraps(func)
     def wrapper(self, message: Message = None, *args, **kwargs) -> Any:
         attrs = [self, ]
-        if message and message.text == '/start':
-            self.bot.send_message(
-                chat_id=message.chat.id,
-                text="Вы отменили действие",
-                reply_markup=get_full_menu_markup(message.chat.username)
-            )
+        print(func.__name__)
 
-        elif message:
+        if message:
+            pprint(message)
+
+            match message.text:
+                case '/start':
+                    self.bot.send_message(
+                        chat_id=message.chat.id,
+                        text="Вы отменили действие",
+                        reply_markup=get_full_menu_markup(message.chat.username)
+                    )
+                    return
+                case 'Главное меню':
+                    self.bot.send_message(
+                        chat_id=message.chat.id,
+                        text="Вы вернулись в главное меню",
+                        reply_markup=get_full_menu_markup(message.chat.username)
+                    )
+                    return
             attrs.append(message)
             return func(*attrs, *args, **kwargs)
         else:
             return func(*attrs, *args, **kwargs)
+
     return wrapper
 
 
@@ -77,7 +91,6 @@ class ShowInstallmentDetail(
             self.product_number,
             excel_data
         )
-
 
     def __generate_and_send_message(self) -> None:
         """Генерация текста и отправка сообщения"""
@@ -126,19 +139,24 @@ class GetInstallmentPlanData(
         self.message = message
         self._start(message)
 
-    def _start(self, message: Message):
+    def _start(self, message: Message, **kwargs):
         self.bot.send_message(
             chat_id=self.telegram_id,
             text="Выберите способ поиска:",
             reply_markup=get_search_buttons()
         )
-
         self.bot.register_next_step_handler(
             message, self._get_search_method
         )
 
-    def _get_search_method(self, message: Message) -> None:
-
+    def _get_search_method(self, message: Message, **kwargs) -> None:
+        if message.text == ButtonText.back_button_text:
+            self.bot.send_message(
+                chat_id=self.telegram_id,
+                text="Вы вернулись на главное меню",
+                reply_markup=get_full_menu_markup(self.message.chat.username)
+            )
+            return
         match message.text:
             case ButtonText.search_by_phone_number_button_text:
                 self.bot.send_message(
@@ -170,7 +188,16 @@ class GetInstallmentPlanData(
         """
         Поиск по номеру договора
         """
-
+        if message.text == ButtonText.back_button_text:
+            self.bot.send_message(
+                chat_id=self.telegram_id,
+                text="Выберите способ поиска:",
+                reply_markup=get_search_buttons()
+            )
+            self.bot.register_next_step_handler(
+                message, self._get_search_method
+            )
+            return
         number = message.text
         if not is_numbers(number):
             self.bot.send_message(
@@ -198,6 +225,16 @@ class GetInstallmentPlanData(
         """
         Поиск по номеру телефона
         """
+        if message.text == ButtonText.back_button_text:
+            self.bot.send_message(
+                chat_id=self.telegram_id,
+                text="Выберите способ поиска:",
+                reply_markup=get_search_buttons()
+            )
+            self.bot.register_next_step_handler(
+                message, self._get_search_method
+            )
+            return
 
         phone_number = message.text
         if not is_numbers(phone_number):
@@ -261,16 +298,26 @@ class AddExcelFile(
         self._start(message)
 
     def _start(self, message: Message) -> None:
+        back_markup = ReplyKeyboardMarkup()
+        back_markup.row(*get_control_buttons())
+
         self.bot.send_message(
             chat_id=self.telegram_id,
             text="Выберите файл (.xlsx):",
-
+            reply_markup=back_markup
         )
         self.bot.register_next_step_handler(
             message, self._get_and_check_file
         )
 
     def _get_and_check_file(self, message: Message) -> None:
+        if message.text == ButtonText.back_button_text:
+            self.bot.send_message(
+                chat_id=message.chat.id,
+                text="Вы вернулись в главное меню",
+                reply_markup=get_full_menu_markup(message.chat.username)
+            )
+            return
         try:
             excel_file = message.document.file_name
 
@@ -316,6 +363,7 @@ class AddExcelFile(
                 message, self._get_and_check_file
             )
             return
+
 
 class SendApplication:
     """ Событие для кнопки "Отправить заявку" """
