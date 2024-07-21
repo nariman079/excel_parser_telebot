@@ -1,6 +1,6 @@
 
 ACCESS_FOR_DATA_UPDATE = [
-    'nariman079i', 'Alex_rumin'
+    'nariman079i', 'Alex_rumin', 'RonniKray'
 ]
 KEYS_FOR_GENERATE_MESSAGE = [
     '№',
