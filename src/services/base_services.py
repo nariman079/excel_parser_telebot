@@ -193,6 +193,8 @@ class GetInstallmentPlanData(
         """
         Поиск по номеру договора
         """
+        back_markup = ReplyKeyboardMarkup(resize_keyboard=True)
+        back_markup.row(*get_control_buttons())
         try:
             if message.text == ButtonText.back_button_text:
                 self.bot.send_message(
@@ -208,8 +210,8 @@ class GetInstallmentPlanData(
             if not is_numbers(number):
                 self.bot.send_message(
                     chat_id=message.chat.id,
-                    text="Введите правильный номер договора\nПример: 943"
-
+                    text="Введите правильный номер договора\nПример: 943",
+                    reply_markup=back_markup
                 )
                 self.bot.register_next_step_handler(
                     message, self._search_by_number
@@ -220,7 +222,7 @@ class GetInstallmentPlanData(
             self.bot.send_message(
                 chat_id=self.telegram_id,
                 text="Введите правильный номер договора\nПример: 943",
-                reply_markup=get_search_buttons()
+                reply_markup=back_markup
             )
             self.bot.register_next_step_handler(
                 message, self._search_by_number
@@ -242,6 +244,8 @@ class GetInstallmentPlanData(
         """
         Поиск по номеру телефона
         """
+        back_markup = ReplyKeyboardMarkup(resize_keyboard=True)
+        back_markup.row(*get_control_buttons())
         try:
             if message.text == ButtonText.back_button_text:
                 self.bot.send_message(
@@ -257,7 +261,8 @@ class GetInstallmentPlanData(
             if not is_numbers(phone_number):
                 self.bot.send_message(
                     chat_id=message.chat.id,
-                    text="Введите правильный номер телефона"
+                    text="Введите правильный номер телефона",
+                    reply_markup=back_markup
                 )
                 self.bot.register_next_step_handler(
                     message, self._search_by_phone_number
@@ -269,7 +274,7 @@ class GetInstallmentPlanData(
             self.bot.send_message(
                 chat_id=self.telegram_id,
                 text="Введите правильный номер телефона\nПример: 89280001288",
-                reply_markup=get_search_buttons()
+                reply_markup=back_markup
             )
             self.bot.register_next_step_handler(
                 message, self._search_by_phone_number
