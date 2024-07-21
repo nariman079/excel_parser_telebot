@@ -375,7 +375,7 @@ class AddExcelFile(
             excel_data_list = excel_data.to_dict(orient='records')
             datas = excel_data_list.pop(0)
 
-            if set(datas).issubset(set(KEYS_FOR_GENERATE_MESSAGE)):
+            if set(KEYS_FOR_GENERATE_MESSAGE).issubset(set(datas.keys())):
                 [os.remove(f'{path}/{file_name}') for file_name in os.listdir(path) if 'file' in file_name]
 
                 downloaded_file = self.bot.download_file(file_info.file_path)
@@ -392,7 +392,10 @@ class AddExcelFile(
             else:
                 self.bot.send_message(
                     chat_id=self.telegram_id,
-                    text="Неверные колонки в таблице"
+                    text="Неверные колонки в таблице\nПопробуйте отравить другой файл"
+                )
+                self.bot.register_next_step_handler(
+                    message, self._get_and_check_file
                 )
 
         except AttributeError:
