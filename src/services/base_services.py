@@ -33,7 +33,7 @@ def check_start(func):
                 case '/start':
                     self.bot.send_message(
                         chat_id=message.chat.id,
-                        text="Вы отменили действие",
+                        text="Добро пожаловать в Ansar Finance Bot ",
                         reply_markup=get_full_menu_markup(message.chat.username)
                     )
                     return
@@ -138,7 +138,7 @@ class GetInstallmentPlanData(
         self.telegram_id = message.chat.id
         self.bot = bot
         self.message = message
-        self._start(message)
+
 
     def _start(self, message: Message, **kwargs):
         self.bot.send_message(

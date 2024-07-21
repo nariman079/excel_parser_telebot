@@ -126,3 +126,5 @@ def get_full_menu_markup(username: str) -> ReplyKeyboardMarkup:
     return menu_markup
 
 
+back_markup = ReplyKeyboardMarkup(resize_keyboard=True)
+back_markup.row(*get_control_buttons())

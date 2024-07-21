@@ -3,7 +3,8 @@ import os.path
 from telebot import TeleBot
 from telebot.types import Message, CallbackQuery
 
-from src.buttons import ButtonText, get_organization_menu_markup, generate_additional_button
+from src.buttons import ButtonText, get_organization_menu_markup, generate_additional_button, get_full_menu_markup, \
+    back_markup
 from src.config import ACCESS_FOR_DATA_UPDATE
 from src.services.base_services import GetInstallmentPlanData, ShowInstallmentDetail, AddExcelFile, SendApplication, \
     MakePayment
@@ -40,13 +41,37 @@ def button_text_handler(message: Message):
                 message=message
             )
         case ButtonText.get_installment_plan_data_button_text:
-            GetInstallmentPlanData(bot=bot, message=message)
+            GetInstallmentPlanData(bot=bot, message=message)._start(message)
         case ButtonText.add_excel_file:
             if message.from_user.username in ACCESS_FOR_DATA_UPDATE:
                 AddExcelFile(
                     bot=bot,
                     message=message
                 )
+        case ButtonText.main_menu_button_text:
+            bot.send_message(
+                chat_id=message.chat.id,
+                text="Вы вернулись на главную",
+                reply_markup=get_full_menu_markup(message.chat.username)
+            )
+        case ButtonText.search_by_number_button_text:
+            bot.send_message(
+                chat_id=message.chat.id,
+                text="Отлично!\nВведите номер договора:",
+                reply_markup=back_markup
+            )
+            bot.register_next_step_handler(
+                message, GetInstallmentPlanData(bot=bot, message=message)._search_by_number
+            )
+        case ButtonText.search_by_phone_number_button_text:
+            bot.send_message(
+                chat_id=message.chat.id,
+                text="Отлично!\nВведите номер телефона:",
+                reply_markup=back_markup
+            )
+            bot.register_next_step_handler(
+                message, GetInstallmentPlanData(bot=bot, message=message)._search_by_phone_number
+            )
         case _:
             pass
 
