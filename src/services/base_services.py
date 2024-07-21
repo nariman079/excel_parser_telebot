@@ -298,7 +298,7 @@ class AddExcelFile(
         self._start(message)
 
     def _start(self, message: Message) -> None:
-        back_markup = ReplyKeyboardMarkup()
+        back_markup = ReplyKeyboardMarkup(resize_keyboard=True)
         back_markup.row(*get_control_buttons())
 
         self.bot.send_message(
