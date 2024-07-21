@@ -118,7 +118,7 @@ class ShowInstallmentDetail(
         if not self.product_data:
             self.bot.send_message(
                 chat_id=self.message.chat.id,
-                text="Такого договора не найдено",
+                text=f"Рассрочка с договором №{self.message.text} не найдена.",
                 reply_markup=get_full_menu_markup(self.message.chat.username)
             )
             return None
@@ -421,11 +421,7 @@ class SendApplication:
                 url=SITE_URL
             )
         )
-        self.bot.send_message(
-            chat_id=self.telegram_id,
-            text="**************",
-            reply_markup=get_full_menu_markup(self.message.chat.username)
-        )
+
 
 
 class MakePayment:
@@ -455,8 +451,3 @@ class MakePayment:
         if self.message.chat.username in ACCESS_FOR_DATA_UPDATE:
             menu_markup.add(generate_additional_button())
 
-        self.bot.send_message(
-            chat_id=self.telegram_id,
-            text="**************",
-            reply_markup=menu_markup
-        )

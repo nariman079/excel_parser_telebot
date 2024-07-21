@@ -72,6 +72,12 @@ def button_text_handler(message: Message):
             bot.register_next_step_handler(
                 message, GetInstallmentPlanData(bot=bot, message=message)._search_by_phone_number
             )
+        case ButtonText.back_button_text:
+            bot.send_message(
+                chat_id=message.chat.id,
+                text="Вы отменили действие",
+                reply_markup=get_full_menu_markup(message.chat.username)
+            )
         case _:
             pass
 
