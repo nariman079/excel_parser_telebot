@@ -84,9 +84,10 @@ class ShowInstallmentDetail(
         self.message = message
 
     def __get_product(self) -> None:
+        """Получение строки из таблицы"""
+
         excel_data = get_excel_data()
 
-        """Получение строки из таблицы"""
         self.product_data = find_row_by_number(
             self.product_number,
             excel_data
@@ -150,6 +151,8 @@ class GetInstallmentPlanData(
         )
 
     def _get_search_method(self, message: Message, **kwargs) -> None:
+        back_markup = ReplyKeyboardMarkup(resize_keyboard=True)
+        back_markup.row(*get_control_buttons())
         if message.text == ButtonText.back_button_text:
             self.bot.send_message(
                 chat_id=self.telegram_id,
@@ -161,7 +164,8 @@ class GetInstallmentPlanData(
             case ButtonText.search_by_phone_number_button_text:
                 self.bot.send_message(
                     chat_id=message.chat.id,
-                    text="Отлично!\nВведите номер телефона:"
+                    text="Отлично!\nВведите номер телефона:",
+                    reply_markup=back_markup
                 )
                 self.bot.register_next_step_handler(
                     message, self._search_by_phone_number
@@ -169,7 +173,8 @@ class GetInstallmentPlanData(
             case ButtonText.search_by_number_button_text:
                 self.bot.send_message(
                     chat_id=message.chat.id,
-                    text="Отлично!\nВведите номер договора:"
+                    text="Отлично!\nВведите номер договора:",
+                    reply_markup=back_markup
                 )
                 self.bot.register_next_step_handler(
                     message, self._search_by_number
@@ -188,22 +193,34 @@ class GetInstallmentPlanData(
         """
         Поиск по номеру договора
         """
-        if message.text == ButtonText.back_button_text:
+        try:
+            if message.text == ButtonText.back_button_text:
+                self.bot.send_message(
+                    chat_id=self.telegram_id,
+                    text="Выберите способ поиска:",
+                    reply_markup=get_search_buttons()
+                )
+                self.bot.register_next_step_handler(
+                    message, self._get_search_method
+                )
+                return
+            number = message.text
+            if not is_numbers(number):
+                self.bot.send_message(
+                    chat_id=message.chat.id,
+                    text="Введите правильный номер договора\nПример: 943"
+
+                )
+                self.bot.register_next_step_handler(
+                    message, self._search_by_number
+                )
+                return
+
+        except Exception:
             self.bot.send_message(
                 chat_id=self.telegram_id,
-                text="Выберите способ поиска:",
+                text="Введите правильный номер договора\nПример: 943",
                 reply_markup=get_search_buttons()
-            )
-            self.bot.register_next_step_handler(
-                message, self._get_search_method
-            )
-            return
-        number = message.text
-        if not is_numbers(number):
-            self.bot.send_message(
-                chat_id=message.chat.id,
-                text="Введите правильный номер договора"
-
             )
             self.bot.register_next_step_handler(
                 message, self._search_by_number
@@ -225,24 +242,35 @@ class GetInstallmentPlanData(
         """
         Поиск по номеру телефона
         """
-        if message.text == ButtonText.back_button_text:
+        try:
+            if message.text == ButtonText.back_button_text:
+                self.bot.send_message(
+                    chat_id=self.telegram_id,
+                    text="Выберите способ поиска:",
+                    reply_markup=get_search_buttons()
+                )
+                self.bot.register_next_step_handler(
+                    message, self._get_search_method
+                )
+                return
+            phone_number = message.text
+            if not is_numbers(phone_number):
+                self.bot.send_message(
+                    chat_id=message.chat.id,
+                    text="Введите правильный номер телефона"
+                )
+                self.bot.register_next_step_handler(
+                    message, self._search_by_phone_number
+                )
+                return
+
+        except Exception as error:
+            print(error.args)
             self.bot.send_message(
                 chat_id=self.telegram_id,
-                text="Выберите способ поиска:",
+                text="Введите правильный номер телефона\nПример: 89280001288",
                 reply_markup=get_search_buttons()
             )
-            self.bot.register_next_step_handler(
-                message, self._get_search_method
-            )
-            return
-
-        phone_number = message.text
-        if not is_numbers(phone_number):
-            self.bot.send_message(
-                chat_id=message.chat.id,
-                text="Введите правильный номер телефона"
-            )
-
             self.bot.register_next_step_handler(
                 message, self._search_by_phone_number
             )
@@ -343,7 +371,8 @@ class AddExcelFile(
 
             self.bot.send_message(
                 chat_id=self.telegram_id,
-                text="Данные обновились"
+                text="Данные обновились",
+                reply_markup=get_full_menu_markup(message.chat.username)
             )
         except AttributeError:
             self.bot.send_message(
