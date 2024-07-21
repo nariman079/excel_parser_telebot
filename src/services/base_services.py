@@ -3,6 +3,7 @@ from functools import wraps, partial
 from pprint import pprint
 from typing import Any
 
+from pandas import read_excel
 from telebot import TeleBot
 from telebot.types import Message, ReplyKeyboardMarkup, ReplyKeyboardRemove
 
@@ -359,26 +360,41 @@ class AddExcelFile(
 
             self.bot.send_message(
                 chat_id=self.telegram_id,
-                text=f'Началсь загрузка таблицы "{excel_file}"'
+                text=f'Началсь проверка и загрузка таблицы "{excel_file}"'
             )
 
             file_id = message.document.file_id
             file_info = self.bot.get_file(file_id)
 
             path = 'documents/'
-
-            [os.remove(f'{path}/{file_name}') for file_name in os.listdir(path)]
-
             downloaded_file = self.bot.download_file(file_info.file_path)
-
-            with open(file_info.file_path, 'wb') as file:
+            with open(path+'test.xlsx', 'wb') as file:
                 file.write(downloaded_file)
 
-            self.bot.send_message(
-                chat_id=self.telegram_id,
-                text="Данные обновились",
-                reply_markup=get_full_menu_markup(message.chat.username)
-            )
+            excel_data = read_excel(f'{path}/test.xlsx')
+            excel_data_list = excel_data.to_dict(orient='records')
+            datas = excel_data_list.pop(0)
+
+            if set(datas).issubset(set(KEYS_FOR_GENERATE_MESSAGE)):
+                [os.remove(f'{path}/{file_name}') for file_name in os.listdir(path) if 'file' in file_name]
+
+                downloaded_file = self.bot.download_file(file_info.file_path)
+
+                with open(file_info.file_path, 'wb') as file:
+                    file.write(downloaded_file)
+
+                self.bot.send_message(
+                    chat_id=self.telegram_id,
+                    text="Данные обновились",
+                    reply_markup=get_full_menu_markup(message.chat.username)
+                )
+                return
+            else:
+                self.bot.send_message(
+                    chat_id=self.telegram_id,
+                    text="Неверные колонки в таблице"
+                )
+
         except AttributeError:
             self.bot.send_message(
                 chat_id=self.telegram_id,
