@@ -457,7 +457,7 @@ class GetInstallmentPlanData:
             return
 
         await message.answer(
-            text="Ваши рассрочки. Выберете ту, которая вас интересует:",
+            text="Найденные рассрочки",
             reply_markup=generate_product_list_buttons(searched_data)
         )
 
@@ -597,15 +597,7 @@ async def search_my_installment_plan(
     animation="CAACAgEAAxkBAAIBo2ak68a67VdA58WBsOkyMYHPO0z0AALFAgACR4AZRNOTsbushnsaNQQ"
     )
     await asyncio.sleep(1.5)
-    # await asyncio.sleep(1)
-    # await message.answer(
-    #     text="Поиск ваших рассрочек",
-    #     reply_markup=ReplyKeyboardMarkup(
-    #         keyboard=[
-    #
-    #         ]
-    #     )
-    # )
+
     excel_data = get_excel_data()
 
     searched_data = find_rows_by_phone_number(
@@ -618,10 +610,12 @@ async def search_my_installment_plan(
             text=f'По вашему номеру “{phone_number}” рассрочек не найдено',
             reply_markup=await get_full_menu_markup(message.chat.username)
         )
+        await animation_stick.delete()
+
         return
 
     await message.answer(
-        text="Ваши рассрочки:",
+        text="Ваши рассрочки. Выберете ту, которая вас интересует:",
         reply_markup=generate_product_list_buttons(searched_data)
     )
     await animation_stick.delete()
