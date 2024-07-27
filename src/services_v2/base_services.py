@@ -91,7 +91,6 @@ async def update_user(
             is_admin=kwargs.get('is_admin')
         )
     )
-    print(d.first().__dict__)
     return kwargs.get('username')
 
 
@@ -490,7 +489,8 @@ class CreateAdminUser:
         if not user:
             await create_user(
                 user=User(
-                    username=username
+                    username=username,
+                    is_admin=True
                 )
             )
             await message.answer(
