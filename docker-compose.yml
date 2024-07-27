@@ -2,7 +2,24 @@ services:
   bot:
     build: .
     restart: unless-stopped
-    command: /bin/bash -c "python /bot/main.py"
+    command: /bin/bash -c "python /bot/main_v2.py"
     network_mode: 'host'
     volumes:
       - ./:/bot/
+
+#  db:
+#    image: postgres:latest
+#    environment:
+#      POSTGRES_PASSWORD: postgres
+#      POSTGRES_USER: postgres
+#      POSTGRES_DB: postgres
+#
+#    ports:
+#      - "5433:5432"
+#    networks:
+#      - net
+#
+#
+#networks:
+#  net:
+#    driver: bridge

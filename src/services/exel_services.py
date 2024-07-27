@@ -1,6 +1,6 @@
 import os
 
-from pandas import read_excel, notnull
+from pandas import read_excel
 
 
 def get_first_obj(objects: list):
@@ -24,7 +24,7 @@ def get_excel_data(
 
 def num_filter(num: int, row_str: int):
     try:
-        return int(row_str) == int(num)
+        return int(num) == int(row_str)
     except Exception as error:
         print(error.args)
         return False
@@ -47,6 +47,7 @@ def find_rows_by_phone_number(
         rows_list: list[dict]
 ) -> list[dict] | None:
     """Поиск строки по ID в списке"""
+
     result_data = filter(
         lambda x: num_filter(phone_number, x['Номер телефона']),
         rows_list

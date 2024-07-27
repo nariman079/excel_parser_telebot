@@ -1,11 +1,11 @@
 import os
-from functools import wraps, partial
+from functools import wraps
 from pprint import pprint
 from typing import Any
 
 from pandas import read_excel
 from telebot import TeleBot
-from telebot.types import Message, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telebot.types import Message, ReplyKeyboardMarkup
 
 from src.config import KEYS_FOR_GENERATE_MESSAGE, WORDS_FOR_REPLACE, \
     ACCESS_FOR_DATA_UPDATE, SITE_URL, WHATSAPP_URL
@@ -139,7 +139,6 @@ class GetInstallmentPlanData(
         self.telegram_id = message.chat.id
         self.bot = bot
         self.message = message
-
 
     def _start(self, message: Message, **kwargs):
         self.bot.send_message(
@@ -307,12 +306,6 @@ class GetInstallmentPlanData(
             reply_markup=generate_product_list_buttons(searched_data)
         )
 
-        self.bot.send_message(
-            chat_id=message.chat.id,
-            text="Выберите чтобы посмотреть детальную информацию",
-            reply_markup=get_full_menu_markup(self.message.chat.username)
-        )
-
 
 class AddExcelFile(
     metaclass=DecorateMethodsMeta
@@ -368,7 +361,7 @@ class AddExcelFile(
 
             path = 'documents/'
             downloaded_file = self.bot.download_file(file_info.file_path)
-            with open(path+'test.xlsx', 'wb') as file:
+            with open(path + 'test.xlsx', 'wb') as file:
                 file.write(downloaded_file)
 
             excel_data = read_excel(f'{path}/test.xlsx')
@@ -442,7 +435,6 @@ class SendApplication:
         )
 
 
-
 class MakePayment:
     """ Событие для кнопки "Совержить оплату" """
 
@@ -469,4 +461,3 @@ class MakePayment:
 
         if self.message.chat.username in ACCESS_FOR_DATA_UPDATE:
             menu_markup.add(generate_additional_button())
-
