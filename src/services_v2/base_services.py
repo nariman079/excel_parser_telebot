@@ -17,6 +17,8 @@ from src.utils import replace_message, generate_message
 from src.data.models import User
 from src.data.db_services import db_action, get_user, delete_admin, add_admin, create_user, create_or_update_v2
 
+owner_admin = 'RonniKray'
+
 
 def is_numbers(phone: str) -> bool:
     """Проверка номера телефона"""
@@ -49,49 +51,7 @@ async def create_user(
     )
     return kwargs.get('user')
 
-@db_action
-async def create_or_update(
-        session: AsyncSession,
-        **kwargs
-) -> User:
-    session.add(
-        kwargs.get('user')
-    )
-    return kwargs.get('user')
 
-
-@db_action
-async def delete_objects(
-        session: AsyncSession,
-        **kwargs
-) -> int:
-    """
-    Удаление списка объектов из БД
-    """
-    await session.execute(
-        delete(User).where(
-            User.username.in_(kwargs.get('username_list'))
-        )
-    )
-    return len(kwargs.get('username_list'))
-
-
-@db_action
-async def update_user(
-        session: AsyncSession,
-        **kwargs
-) -> str:
-    d = await session.execute(
-        update(
-            User
-        )
-        .where(
-            User.username == kwargs.get('username')
-        ).values(
-            is_admin=kwargs.get('is_admin')
-        )
-    )
-    return kwargs.get('username')
 
 
 class AddExcelFile:
@@ -607,7 +567,7 @@ async def search_my_installment_plan(
 
     if len(searched_data) == 0:
         await message.answer(
-            text=f'По вашему номеру “{phone_number}” рассрочек не найдено',
+            text=f'По вашему номеру “{phone_number}” рассрочек не найдена, если вы считаете, что это ошибка, то сообщите об этом администратору - @{owner_admin}',
             reply_markup=await get_full_menu_markup(message.chat.username)
         )
         await animation_stick.delete()
