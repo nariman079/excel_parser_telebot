@@ -1,4 +1,5 @@
 import os
+import re
 
 from pandas import read_excel
 
@@ -22,9 +23,17 @@ def get_excel_data(
     return excel_data_list
 
 
+def cln_phone(phone_number):
+    # Регулярное выражение для поиска префиксов +7 или 8 в начале строки
+    regex = r'^\+7|^8|^7'
+    # Замена найденного префикса на пустую строку
+    cleaned_phone_number = re.sub(regex, '', phone_number)
+    return cleaned_phone_number
+
+
 def num_filter(num: int, row_str: int):
     try:
-        return int(num) == int(row_str)
+        return cln_phone(str(num)) == cln_phone(str(row_str))
     except Exception as error:
         print(error.args)
         return False
@@ -43,6 +52,19 @@ def find_row_by_number(
 
 
 def find_rows_by_phone_number(
+        phone_number: str,
+        rows_list: list[dict]
+) -> list[dict] | None:
+    """Поиск строки по ID в списке"""
+
+    result_data = filter(
+        lambda x: num_filter(phone_number, x['Номер телефона']),
+        rows_list
+    )
+    return list(result_data)
+
+
+def find_rows_by_phone_number_for_me(
         phone_number: str,
         rows_list: list[dict]
 ) -> list[dict] | None:
