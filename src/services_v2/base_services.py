@@ -11,7 +11,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.buttons_v2 import get_back_markup, ButtonText, get_full_menu_markup, generate_url_button, get_search_buttons, \
     generate_product_list_buttons, get_confirm_buttons, get_access_phone_number_buttons
 from src.config import KEYS_FOR_GENERATE_MESSAGE, WHATSAPP_URL, SITE_URL, WORDS_FOR_REPLACE
-from src.services.exel_services import get_excel_data, find_rows_by_phone_number, find_row_by_number
+from src.services.exel_services import get_excel_data, find_rows_by_phone_number, find_row_by_number, \
+    find_rows_by_phone_number_for_me
 from src.state_groups import ExcelFileState, SearchInstallmentPlanState, CreateAdminUserState, GetContactUser
 from src.utils import replace_message, generate_message
 from src.data.models import User
@@ -357,6 +358,7 @@ class GetInstallmentPlanData:
                 await message.answer(
                     text="Попробуйте еще раз!\nВведите правильный номер телефона\nПример: 89280001288",
                     reply_markup=ReplyKeyboardMarkup(
+                        resize_keyboard=True,
                         keyboard=[
                             [
                                 KeyboardButton(
@@ -551,7 +553,6 @@ async def search_my_installment_plan(
     """
     user = await get_user(username=message.chat.username)
 
-    print(user, 'dffffffffffffffffffffffffffffffffffffffffffffffffffff')
     phone_number = user.phone_number
     animation_stick = await message.answer_animation(
     animation="CAACAgEAAxkBAAIBo2ak68a67VdA58WBsOkyMYHPO0z0AALFAgACR4AZRNOTsbushnsaNQQ"
@@ -560,7 +561,7 @@ async def search_my_installment_plan(
 
     excel_data = get_excel_data()
 
-    searched_data = find_rows_by_phone_number(
+    searched_data = find_rows_by_phone_number_for_me(
         phone_number=phone_number,
         rows_list=excel_data
     )
