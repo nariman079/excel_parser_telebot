@@ -22,7 +22,7 @@ class User(Base):
         primary_key=True
     )
     telegram_id = Column(
-        String,
+        Integer,
         unique=True
     )
     username = Column(
@@ -36,3 +36,5 @@ class User(Base):
         Boolean,
         default=False
     )
+
+

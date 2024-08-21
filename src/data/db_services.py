@@ -47,7 +47,7 @@ async def create_user(session: AsyncSession, **kwargs):
 
 @db_action
 async def get_user(session: AsyncSession, **kwargs):
-    username: str = kwargs.get('username')
+    username: str = kwargs.get('user')
 
     user = await session.execute(
         select(

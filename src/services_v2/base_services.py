@@ -31,7 +31,7 @@ async def get_user(
         session: AsyncSession,
         **kwargs
 ) -> User:
-    username: str = kwargs.get('username')
+    username: str = kwargs.get('user')
     users = await session.execute(
         select(
             User
@@ -51,8 +51,6 @@ async def create_user(
         kwargs.get('user')
     )
     return kwargs.get('user')
-
-
 
 
 class AddExcelFile:
@@ -379,18 +377,18 @@ class GetInstallmentPlanData:
             await message.answer(
                 text="Попробуйте еще раз!\nВведите правильный номер телефона\nПример: 89280001288",
                 reply_markup=ReplyKeyboardMarkup(
-                        resize_keyboard=True,
-                        keyboard=[
-                            [
-                                KeyboardButton(
-                                    text=ButtonText.back_button_text
-                                ),
-                                KeyboardButton(
-                                    text=ButtonText.main_menu_button_text
-                                )
-                            ]
+                    resize_keyboard=True,
+                    keyboard=[
+                        [
+                            KeyboardButton(
+                                text=ButtonText.back_button_text
+                            ),
+                            KeyboardButton(
+                                text=ButtonText.main_menu_button_text
+                            )
                         ]
-                    )
+                    ]
+                )
             )
             await state.set_state(SearchInstallmentPlanState.phone_number)
 
@@ -555,7 +553,7 @@ async def search_my_installment_plan(
 
     phone_number = user.phone_number
     animation_stick = await message.answer_animation(
-    animation="CAACAgEAAxkBAAIBo2ak68a67VdA58WBsOkyMYHPO0z0AALFAgACR4AZRNOTsbushnsaNQQ"
+        animation="CAACAgEAAxkBAAIBo2ak68a67VdA58WBsOkyMYHPO0z0AALFAgACR4AZRNOTsbushnsaNQQ"
     )
     await asyncio.sleep(1.5)
 
@@ -580,4 +578,3 @@ async def search_my_installment_plan(
         reply_markup=generate_product_list_buttons(searched_data)
     )
     await animation_stick.delete()
-

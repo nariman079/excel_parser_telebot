@@ -25,6 +25,8 @@ class ButtonText(StrEnum):
     add_admin_button_text = "Добавить админа"
     my_installment_plans = "Мои рассрочки"
 
+    get_access_phone_number_text = "Разрешить доступ к номеру телефона"
+
 
 def get_organization_menu_markup() -> ReplyKeyboardMarkup:
     """
