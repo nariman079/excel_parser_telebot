@@ -64,7 +64,9 @@ class AddExcelFile:
     async def start(message: Message, state: FSMContext) -> None:
         await message.answer(
             text="Выберите файл (.xlsx):",
-            reply_markup=ReplyKeyboardMarkup(keyboard=[
+            reply_markup=ReplyKeyboardMarkup(
+                resize_keyboard=True,
+                keyboard=[
                 [
                     KeyboardButton(
                         text=ButtonText.main_menu_button_text
