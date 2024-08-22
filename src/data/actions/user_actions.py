@@ -9,7 +9,8 @@ from src.data.models import User
 
 async def get_user_from_db(
         field_name: str,
-        tg_user: TgUser
+        tg_user: TgUser,
+        tg_user_field_name: str
 ) -> User | None:
     """Получение пользователя из базы данных"""
     try:
@@ -19,7 +20,7 @@ async def get_user_from_db(
                     select(
                         User
                     ).where(
-                        getattr(User, field_name) == str(tg_user.id)
+                        getattr(User, field_name) == str(getattr(tg_user, tg_user_field_name))  # type: ignore
                     )
                 )
                 return query.scalars().first()
@@ -76,3 +77,26 @@ async def update_user_on_db(
             msg="\n".join(error.args)
         )
         return None
+
+
+async def update_user_field(username: str) -> bool:
+    try:
+        async with async_session() as session:
+            async with session.begin():
+                await session.execute(
+                    update(
+                        User
+                    ).where(
+                        User.username == username
+                    ).values(
+                        is_admin=False
+                    ))
+                await session.commit()
+                return True
+    except Exception as error:
+        logging.log(
+            level=logging.ERROR,
+            msg="\n".join(error.args)
+        )
+        return False
+

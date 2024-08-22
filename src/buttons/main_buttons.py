@@ -1,4 +1,4 @@
-from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 
 from src.data.models import User
 
@@ -77,7 +77,7 @@ async def get_custom_user_menu() -> ReplyKeyboardMarkup:
     )
 
 
-async def get_phone_number():
+async def get_phone_number() -> ReplyKeyboardMarkup:
     """Получение номера телефона"""
     return ReplyKeyboardMarkup(
         resize_keyboard=True,
@@ -86,6 +86,20 @@ async def get_phone_number():
                 KeyboardButton(
                     text=ButtonText.get_access_phone_number_text,
                     request_contact=True,
+                )
+            ]
+        ]
+    )
+
+
+async def get_main_menu() -> ReplyKeyboardMarkup:
+    """Получение кнопки главное меню"""
+    return ReplyKeyboardMarkup(
+        resize_keyboard=True,
+        keyboard=[
+            [
+                KeyboardButton(
+                    text=ButtonText.main_menu_button_text,
                 )
             ]
         ]
@@ -120,6 +134,25 @@ async def generate_start_text(user: User | None) -> str:
         return ButtonText.get_access_phone_number_text
     else:
         return ButtonText.get_access_phone_number_text
+
+
+async def get_confirm_buttons(username: str) -> InlineKeyboardMarkup:
+    """Кнопки для подтверждения удаления админа"""
+    confirm_buttons = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="Да",
+                    callback_data=f"delete-{username}"
+                ),
+                InlineKeyboardButton(
+                    text="Нет",
+                    callback_data="cancelled"
+                )
+            ]
+        ]
+    )
+    return confirm_buttons
 
 
 async def get_user_menu(user: User) -> ReplyKeyboardMarkup:
