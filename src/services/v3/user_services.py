@@ -36,6 +36,7 @@ async def get_user_data(tg_user: TgUser) -> User:
 
 
 async def create_or_update_user(tg_user: User):
+
     user_data = await get_user_data(tg_user)
     db_user = await get_user(tg_user)
 

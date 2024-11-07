@@ -13,7 +13,9 @@ from dotenv import load_dotenv
 
 from src.buttons.main_buttons import ButtonText
 from src.services.v3.command_services import start_handler, get_phone_number_handler, create_admin_handler, \
-    get_admin_username_handler, cancelled_delete_admin_user_handler, delete_admin_handler
+    get_admin_username_handler, cancelled_delete_admin_user_handler, delete_admin_handler, make_payment_handler, \
+    send_application_handler, show_installment_detail_callback_handler, get_installment_plan_data_handler, \
+    get_search_type_handler, get_main_menu_handler, get_search_by_number_handler
 from src.state_groups import CreateAdminUserState, ExcelFileState, SearchInstallmentPlanState
 
 load_dotenv()
@@ -25,18 +27,24 @@ bot = Bot(token=token, default=DefaultBotProperties(parse_mode=ParseMode.HTML, l
 dp = Dispatcher()
 
 
-@dp.message(CommandStart())
+@dp.message(CommandStart(), state="*")
 async def get_start(
         message: Message,
+
 ) -> None:
     """Запуск бота"""
     await start_handler(message)
 
 
 @dp.message(F.text == ButtonText.main_menu_button_text)
-async def get_main_menu_command(message: Message) -> None:
+async def get_main_menu_command(
+        message: Message,
+        state: FSMContext
+) -> None:
     """Главное меню"""
-    pass
+    await get_main_menu_handler(
+        message, state
+    )
 
 
 @dp.message(F.text == ButtonText.add_excel_file)
@@ -94,13 +102,13 @@ async def get_admin_username_command(
 @dp.message(F.text == ButtonText.make_payment_button_text)
 async def make_payment_command(message: Message) -> None:
     """Совершение оплаты"""
-    pass
+    await make_payment_handler(message)
 
 
 @dp.message(F.text == ButtonText.send_application_button_text)
 async def send_application_command(message: Message) -> None:
     """Отправка заявки"""
-    pass
+    await send_application_handler(message)
 
 
 @dp.message(F.text == ButtonText.get_installment_plan_data_button_text)
@@ -109,16 +117,23 @@ async def get_installment_plan_data_command(
         state: FSMContext
 ) -> None:
     """Получение данных о рассрочке"""
-    pass
+    await get_installment_plan_data_handler(
+        message, state
+    )
+
+
+
 
 
 @dp.message(SearchInstallmentPlanState.search_type)
-async def get_search_method_command(
+async def select_search_method_command(
         message: Message,
         state: FSMContext
 ) -> None:
     """Выбор метода поиска данных о рассрочке"""
-    pass
+    await get_search_type_handler(
+        message, state
+    )
 
 
 @dp.message(SearchInstallmentPlanState.phone_number)
@@ -136,19 +151,15 @@ async def get_search_by_number_command(
         state: FSMContext
 ) -> None:
     """Поиск по номеру договора"""
-    pass
+    await get_search_by_number_handler(
+        message, state
+    )
 
 
 async def callback_handler(callback: CallbackQuery):
-    # my_user = await get_user(callback.from_user)
 
-    if 'product_' in callback.data:
-        ...
-        # await ShowInstallmentDetail(
-        #     message=callback.message,
-        #     product_number=int(callback.data.replace('product_', ''))
-        # ).execute()
-
+    if 'product-' in callback.data:
+        await show_installment_detail_callback_handler(callback)
     elif 'delete-' in callback.data:
         await delete_admin_handler(callback)
     elif 'cancelled' in callback.data:

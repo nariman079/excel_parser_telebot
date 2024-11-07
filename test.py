@@ -1,28 +1,21 @@
-import asyncio
+def task_1():
+    students = {"Tom", "Bob", "Sam"}
+    employees = {"Tom", "Bob", "Alex", "Mike"}
+    print("Люди в обоих группах", employees | students)
+    print("Люди которые одновременно учатся и работают",  employees & students)
+    print("Люди которые только учатся", students - employees)
+    print("Люди которые или учатся, или работабют, но не одновременно", students ^ employees)
 
-
-from sqlalchemy import update, select
-from pydantic import BaseModel
-from src.data.database import async_session
-from src.data.models import User
-
-
-class UserSchema(BaseModel):
-    telegram_id: int
-    username: str
-
-async def update_user():
-    new_user = UserSchema(
-        telegram_id=12,
-        username="23"
-    )
-    smt = select(User).where(User.telegram_id == 12)
-    print(smt)
-    # async with async_session() as session:
-    #     async with session.begin():
-    #         new_user = await session.execute(
-    #
-    #         )
-    #         return new_user
-
-asyncio.run(update_user())
+def task_2():
+    input_data ="""69485 Jack 
+        95715 qwerty 
+        95715 Alex 
+        83647 M
+        197128 qwerty 
+        95715 Jack 
+        93289 Alex 
+        95715 Alex 
+        95715 M
+    """
+    input_data.strip()
+    input_data.split()

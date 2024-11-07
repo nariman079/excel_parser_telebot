@@ -2,6 +2,7 @@ import os
 import re
 
 from pandas import read_excel
+from sqlalchemy.util import await_only
 
 
 def get_first_obj(objects: list):
@@ -75,3 +76,41 @@ def find_rows_by_phone_number_for_me(
         rows_list
     )
     return list(result_data)
+
+
+
+async def find_row(
+        id_: int | str,
+        field_name: str,
+        rows_list: list[dict]
+) -> dict | None:
+    """Поиск строки по полю и ID или Номеру телефона"""
+    result_data = filter(
+        lambda x: num_filter(id_, x[field_name]),
+        rows_list
+    )
+    return get_first_obj(list(result_data))
+
+
+async def find_row_number(
+        id_: int,
+        row_list: list[dict]
+) -> dict | None:
+    """Поиск строки по ID"""
+    return await find_row(
+        id_,
+        '№',
+        row_list
+    )
+
+
+async def find_row_phone_number(
+        phone_number: int,
+        row_list: list[dict]
+) -> dict | None:
+    """Поиск строки по номеру телефона"""
+    return await find_row(
+        phone_number,
+        'Номер телефона',
+        row_list
+    )
