@@ -41,6 +41,20 @@ async def get_user(
     )
     return users.scalars().first()
 
+@db_action
+async def get_user_by_id(
+        session: AsyncSession,
+        **kwargs
+) -> User:
+    telegram_id: str = kwargs.get('telegram_id')
+    users = await session.execute(
+        select(
+            User
+        ).where(
+            User.telegram_id == telegram_id
+        )
+    )
+    return users.scalars().first()
 
 @db_action
 async def create_user(
@@ -553,7 +567,7 @@ async def search_my_installment_plan(
     """
     Поиск по номеру телефона
     """
-    user = await get_user(username=message.chat.username)
+    user = await get_user_by_id(telegram_id=message.from_user.id)
 
     phone_number = user.phone_number
     animation_stick = await message.answer_animation(
