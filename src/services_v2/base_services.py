@@ -551,6 +551,7 @@ class StartHandler:
                 phone_number=message.contact.phone_number
             )
             await create_or_update_v2(
+                telegram_id=tg_user.id,
                 username=tg_user.username,
                 updated_data=new_user
             )

@@ -7,6 +7,7 @@ from sqlalchemy import select, Result, delete, update
 
 from src.data.database import async_session, Base, get_db
 from src.data.models import User
+from src.services_v2.base_services import get_user_by_id
 
 
 def db_action(func):
@@ -104,13 +105,13 @@ async def update_user(session: AsyncSession, **kwargs):
 async def create_or_update_v2(**kwargs):
     username = kwargs.get('username')
     updated_data = kwargs.get('updated_data')
-
-    user = await get_user(username=username, updated_data=updated_data)
+    telegram_id = kwargs.get('telegram_id')
+    user = await get_user_by_id(telegram_id=telegram_id, updated_data=updated_data)
     if user:
         await update_user(
             username=username,
-            updated_data=dict(
-            ))
+            updated_data=updated_data
+        )
     else:
         await create_user(
             user=updated_data
