@@ -106,7 +106,7 @@ async def create_or_update_v2(**kwargs):
     username = kwargs.get('username')
     updated_data = kwargs.get('updated_data')
     telegram_id = kwargs.get('telegram_id')
-    user = await get_user_by_id(telegram_id=telegram_id, updated_data=updated_data)
+    user = await get_user(username=username)
     if user:
         await update_user(
             username=username,
