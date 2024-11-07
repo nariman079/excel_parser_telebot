@@ -51,7 +51,7 @@ async def get_user_by_id(
         select(
             User
         ).where(
-            User.telegram_id == telegram_id
+            User.telegram_id == str(telegram_id)
         )
     )
     return users.scalars().first()
@@ -505,7 +505,7 @@ class StartHandler:
     @staticmethod
     async def get_or_create_user(message: Message, state: FSMContext) -> None:
         tg_user = message.from_user
-        db_user = await get_user(username=tg_user.username)
+        db_user = await get_user_by_id(telegram_id=tg_user.id)
         if db_user:
             if db_user.phone_number and db_user.is_admin:
                 await message.answer(
@@ -568,7 +568,9 @@ async def search_my_installment_plan(
     Поиск по номеру телефона
     """
     user = await get_user_by_id(telegram_id=message.from_user.id)
-
+    if not user:
+        await message.answer(text="Произошла ошибка, попробуйте перезапустить бота! /start")
+        return
     phone_number = user.phone_number
     animation_stick = await message.answer_animation(
     animation="CAACAgEAAxkBAAIBo2ak68a67VdA58WBsOkyMYHPO0z0AALFAgACR4AZRNOTsbushnsaNQQ"
