@@ -19,7 +19,7 @@ from src.services.v3.user_services import get_user, create_or_update_user, get_c
     create_admin_user, delete_admin_user, set_admin_user
 from src.state_groups import CreateAdminUserState, SearchInstallmentPlanState, ExcelFileState
 
-owner_admin = "RonnyKry"
+owner_admin = "RonnyKray"
 
 async def base_show_installment_detail(
         product_number: str | int,
