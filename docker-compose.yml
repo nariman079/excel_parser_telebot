@@ -23,7 +23,8 @@ services:
     command: sh -c "sleep 5s && alembic upgrade head"
     depends_on:
       - db
-    network_mode: 'host'
+    networks:
+      - net
 
   bot:
     build: .
@@ -36,7 +37,8 @@ services:
     depends_on:
       - migrations
       - db
-    network_mode: 'host'
+    networks:
+      - net
 
 
 networks:
