@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: d4b80f3294b0
+Revision ID: bda684c88a35
 Revises: 
-Create Date: 2024-07-26 03:46:43.633268
+Create Date: 2024-11-09 14:07:51.708029
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'd4b80f3294b0'
+revision: str = 'bda684c88a35'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -23,10 +23,11 @@ def upgrade() -> None:
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('telegram_id', sa.String(), nullable=True),
-    sa.Column('username', sa.String(), nullable=True),
-    sa.Column('is_admin', sa.Boolean(), nullable=True),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('telegram_id')
+    sa.Column('username', sa.String(), nullable=False),
+    sa.Column('phone_number', sa.String(), nullable=False),
+    sa.Column('is_admin', sa.Boolean(), nullable=False),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_users')),
+    sa.UniqueConstraint('telegram_id', name=op.f('uq_users_telegram_id'))
     )
     # ### end Alembic commands ###
 

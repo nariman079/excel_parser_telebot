@@ -6,7 +6,7 @@ from aiogram.types import (ReplyKeyboardMarkup,
                            InlineKeyboardMarkup)
 
 from src.config import PRODUCT_ROW_TITLE, NUMBER_ROW_TITLE
-from src.data.db_services import get_user
+from src.data.models import User
 
 
 class ButtonText(StrEnum):
@@ -105,7 +105,7 @@ def generate_product_list_buttons(installment_rows: list[dict]) -> InlineKeyboar
 async def get_full_menu_markup(username: str) -> ReplyKeyboardMarkup:
     menu_markup = get_organization_menu_markup()
 
-    user = await get_user(username=username)
+    user = await User.find_first_by_kwargs(username=username)
 
     if user and user.is_admin:
         admin_buttons = generate_additional_button()

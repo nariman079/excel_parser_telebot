@@ -12,9 +12,7 @@ def get_first_obj(objects: list):
     return objects[0]
 
 
-def get_excel_data(
-
-) -> list[dict] | None:
+def get_excel_data() -> list[dict] | None:
     """ Получение и преобразование файла """
     path = 'documents/'
     file_in_dir = os.listdir(path)[0]

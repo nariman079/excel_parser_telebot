@@ -1,7 +1,10 @@
-from pickle import SETITEMS
 
-from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import (KeyboardButton,
+                           ReplyKeyboardMarkup,
+                           InlineKeyboardMarkup,
+                           InlineKeyboardButton)
 
+from src.config import PRODUCT_ROW_TITLE, NUMBER_ROW_TITLE
 from src.data.models import User
 
 
@@ -224,6 +227,61 @@ async def get_back_button():
                         ]
                 )
 
+def get_search_buttons() -> ReplyKeyboardMarkup:
+    """
+    Генерация кнопок для поиска
+
+    По номеру договора
+    По номеру телефона
+    """
+
+    search_markup = ReplyKeyboardMarkup(
+        resize_keyboard=True,
+        keyboard=[
+            [
+                KeyboardButton(
+                    text=ButtonText.search_by_number_button_text
+                ),
+            ],
+            [
+                KeyboardButton(
+                    text=ButtonText.search_by_phone_number_button_text
+                )
+            ],
+            [
+                KeyboardButton(
+                    text=ButtonText.main_menu_button_text
+                )
+            ]
+        ]
+    )
+    return search_markup
+
+def generate_product_list_buttons(installment_rows: list[dict]) -> InlineKeyboardMarkup:
+    """Генерация списка товаров в виде InlineKeyboardButton"""
+
+    product_inline_markup = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(
+                text=str(row[PRODUCT_ROW_TITLE]),
+                callback_data=f"product-{row[NUMBER_ROW_TITLE]}"
+            )] for row in installment_rows
+        ]
+    )
+    return product_inline_markup
+
+def generate_restart_button():
+    restart_button = ReplyKeyboardMarkup(
+        resize_keyboard=True,
+        keyboard=[
+            [
+                KeyboardButton(
+                    text='/start'
+                ),
+            ],
+        ]
+    )
+    return restart_button
 
 async def get_user_menu(user: User) -> ReplyKeyboardMarkup:
     """Получение меню пользователя"""

@@ -16,7 +16,6 @@ from src.services.exel_services import get_excel_data, find_rows_by_phone_number
 from src.state_groups import ExcelFileState, SearchInstallmentPlanState, CreateAdminUserState, GetContactUser
 from src.utils import replace_message, generate_message
 from src.data.models import User
-from src.data.db_services import db_action, get_user, delete_admin, add_admin, create_user, create_or_update_v2
 
 owner_admin = 'RonniKray'
 
@@ -26,31 +25,6 @@ def is_numbers(phone: str) -> bool:
     return phone.isdigit()
 
 
-@db_action
-async def get_user(
-        session: AsyncSession,
-        **kwargs
-) -> User:
-    username: str = kwargs.get('user')
-    users = await session.execute(
-        select(
-            User
-        ).where(
-            User.username == username
-        )
-    )
-    return users.scalars().first()
-
-
-@db_action
-async def create_user(
-        session: AsyncSession,
-        **kwargs
-) -> User:
-    session.add(
-        kwargs.get('user')
-    )
-    return kwargs.get('user')
 
 
 class AddExcelFile:

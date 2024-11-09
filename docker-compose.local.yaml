@@ -1,0 +1,25 @@
+services:
+  migrations:
+    build: .
+    volumes:
+      - .:/bot
+    command: sh -c "sleep 5s && alembic upgrade head"
+    environment:
+      - PRODUCTION_MODE=1
+    depends_on:
+      - db
+    network_mode: 'host'
+
+  bot:
+    build: .
+    volumes:
+      - .:/bot
+    command: ['python', 'main_v3.py']
+    env_file:
+      - .env
+    environment:
+      - PRODUCTION_MODE=1
+    depends_on:
+      - migrations
+      - db
+    network_mode: 'host'

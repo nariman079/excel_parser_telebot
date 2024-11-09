@@ -1,25 +1,47 @@
 services:
+  db:
+    image: postgres
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ansar
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5431:5432"
+    networks:
+      - net
+
+  migrations:
+    build: .
+    volumes:
+      - .:/bot
+    environment:
+      - PRODUCTION_MODE=1
+    command: sh -c "sleep 5s && alembic upgrade head"
+    depends_on:
+      - db
+    network_mode: 'host'
+
   bot:
     build: .
     restart: unless-stopped
-    command: /bin/bash -c "python /bot/main_v2.py"
-    network_mode: 'host'
     volumes:
-      - ./:/bot/
-
-  db:
-    image: postgres:latest
+      - .:/bot
+    command: [ 'python', 'main_v3.py' ]
     environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
-
-    ports:
-      - "5433:5432"
-    networks:
-      - net
+      - PRODUCTION_MODE=1
+    depends_on:
+      - migrations
+      - db
+    network_mode: 'host'
 
 
 networks:
   net:
     driver: bridge
+
+volumes:
+  db_data:
