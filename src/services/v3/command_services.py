@@ -27,7 +27,8 @@ async def base_show_installment_detail(
 ) -> None:
     """"""
     user = await get_user(chat_id=message.chat.id)
-    logging.info(f"User: {user.__dict__}")
+    if user:
+        logging.info(f"User: {user.__dict__}")
 
     message_args = await generate_installment_detail_message_args(
         product_number,
