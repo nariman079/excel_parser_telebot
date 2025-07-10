@@ -4,7 +4,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /bot/
 COPY /poetry.lock pyproject.toml /bot/
 RUN pip install poetry
-RUN poetry config virtualenvs.create false && poetry install
+RUN poetry config virtualenvs.create false && poetry install --no-root
 COPY ./documents /bot/documents
 COPY ./migrations /bot/migrations
 COPY ./src /bot/src
